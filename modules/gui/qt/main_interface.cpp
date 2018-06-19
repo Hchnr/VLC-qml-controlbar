@@ -62,6 +62,8 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QScreen>
+#include <QtQuickWidgets/QQuickWidget>
+
 #ifdef _WIN32
 #include <QFileInfo>
 #endif
@@ -329,8 +331,7 @@ void MainInterface::recreateToolbars()
     controls = new ControlsWidget( p_intf, b_adv, this );
     inputC = new InputControlsWidget( p_intf, this );
     mainLayout->insertWidget( 2, inputC );
-    mainLayout->insertWidget( settings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3,
-                              controls );
+    mainLayout->insertWidget( settings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3, controls );
 
     if( fullscreenControls )
     {
@@ -492,13 +493,20 @@ void MainInterface::createMainWidget( QSettings *creationSettings )
 
     /* Create the CONTROLS Widget */
     controls = new ControlsWidget( p_intf,
-        creationSettings->value( "MainWindow/adv-controls", false ).toBool(), this );
+         creationSettings->value( "MainWindow/adv-controls", false ).toBool(), this );
     inputC = new InputControlsWidget( p_intf, this );
 
+    /* add qml toolbar here */
+    controlsBar = new QQuickWidget();
+    controlsBar->setSource( QUrl ( QStringLiteral("qrc:/controlbar/Toolbar/BottomToolbar.qml") ) );
+    controlsBar->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
     mainLayout->insertWidget( 2, inputC );
-    mainLayout->insertWidget(
-        creationSettings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3,
-        controls );
+    /* test if this is toolbar [hechenrui 20180619] */
+    mainLayout->insertWidget(creationSettings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3, controlsBar );
+    // mainLayout->insertWidget(
+    //    creationSettings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3,
+    //    controls );
 
     /* Visualisation, disabled for now, they SUCK */
     #if 0

@@ -31,6 +31,7 @@
 
 #include <QSystemTrayIcon>
 #include <QStackedWidget>
+#include <QtQuickWidgets/QQuickWidget>
 
 #ifdef _WIN32
 # include <shobjidl.h>
@@ -144,6 +145,7 @@ protected:
     QString              input_name;
     QVBoxLayout         *mainLayout;
     ControlsWidget      *controls;
+    QQuickWidget        *controlsBar;
     InputControlsWidget *inputC;
     FullscreenControllerWidget *fullscreenControls;
 

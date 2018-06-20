@@ -11,7 +11,7 @@ ToolBar{
         property alias centerToolbarRp: centerToolbarRp
         Repeater {
             id: centerToolbarRp
-            model: centerList
+            model: centerbarList
             delegate: ToolButton {
                 // Text { text: model.modelData.widgetName }
                 property string imgsrc: ""
@@ -38,14 +38,7 @@ ToolBar{
                 */
             }
         }
-        ListModel {
-            id: centerList
-            ListElement {widgetName: "Slower"}
-            ListElement {widgetName: "Previous"}
-            ListElement {widgetName: "Play"}
-            ListElement {widgetName: "Next"}
-            ListElement {widgetName: "Faster"}
-        }
+
     }
 }
 

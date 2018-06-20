@@ -8,7 +8,7 @@ ToolBar{
     RowLayout{
         height: parent.height
         Repeater {
-            model: rightList
+            model: rightbarList
             delegate: ToolButton {
                 // Text { text: model.modelData.widgetName }
                 Image {
@@ -26,12 +26,6 @@ ToolBar{
                 }
                 */
             }
-        }
-        ListModel {
-            id: rightList
-            ListElement {widgetName: "Fullscreen"}
-            ListElement {widgetName: "Playlist"}
-            ListElement {widgetName: "TBD"}
         }
     }
 }

@@ -289,4 +289,19 @@ signals:
     void kc_pressed(); /* easter eggs */
 };
 
+/* model for qml-controlbar */
+
+class ModelObject : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString widgetName READ widgetName NOTIFY widgetNameChanged)
+public:
+    ModelObject(QString name) { m_widgetName = name; }
+    QString widgetName() {return m_widgetName;}
+signals:
+    void  widgetNameChanged();
+private:
+    QString m_widgetName;
+};
+
 #endif

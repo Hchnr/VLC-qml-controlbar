@@ -10,7 +10,7 @@ ToolBar{
     RowLayout{
         height: parent.height
         Repeater {
-            model: leftList
+            model: leftbarList
             delegate: ToolButton {
                 Image {
                     source: controlbar.getIconFromName(widgetName)
@@ -28,13 +28,6 @@ ToolBar{
                     }
                 }
             }
-        }
-        ListModel {
-            id: leftList
-            ListElement {widgetName: "Bookmark"}
-            ListElement {widgetName: "Subtitle"}
-            ListElement {widgetName: "Random"}
-            ListElement {widgetName: "Loop"}
         }
     }
 }

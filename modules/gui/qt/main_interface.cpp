@@ -314,7 +314,7 @@ MainInterface::~MainInterface()
 void MainInterface::computeMinimumSize()
 {
     int minWidth = 80;
-    if( menuBar()->isVisible() )
+    if( controls && menuBar()->isVisible() )
         minWidth += controls->sizeHint().width();
 
     setMinimumWidth( minWidth );
@@ -330,10 +330,12 @@ void MainInterface::recreateToolbars()
     delete controls;
     delete inputC;
 
+    /*
     controls = new ControlsWidget( p_intf, b_adv, this );
     inputC = new InputControlsWidget( p_intf, this );
     mainLayout->insertWidget( 2, inputC );
     mainLayout->insertWidget( settings->value( "MainWindow/ToolbarPos", false ).toBool() ? 0: 3, controls );
+    */
 
     if( fullscreenControls )
     {
@@ -494,24 +496,36 @@ void MainInterface::createMainWidget( QSettings *creationSettings )
     resizeStack( stackWidgetsSizes[bgWidget].width(), stackWidgetsSizes[bgWidget].height() );
 
     /* Create the CONTROLS Widget */
+    /*
     controls = new ControlsWidget( p_intf,
          creationSettings->value( "MainWindow/adv-controls", false ).toBool(), this );
+         */
+    /* without inputC, VLC crashes when play a video
+       with this inputC get error:
+         libva error: va_getDriverName() failed with unknown libva error,driver_name=(null)
+         [00007f36ac002b10] glconv_vaapi_drm gl error: vaInitialize: unknown libva error
+         Failed to open VDPAU backend libvdpau_nvidia.so: No such file or directory
+    */
     inputC = new InputControlsWidget( p_intf, this );
+    inputC->setVisible(false);
 
     /* Add models for qml-ControlBar, hechenrui 20180620*/
-    settings->beginGroup("MainWindow");
-    settings->beginGroup("Controlbar");
-
     QStringList leftbar, centerbar, rightbar;
-    leftbar << "Bookmark" << "Subtitle" << "Random" << "Loop";
-    centerbar << "Slower" << "Previous" << "Play" << "Next" << "Faster";
-    rightbar << "Fullscreen" << "Playlist" << "TBD";
-    settings->setValue( "lefttoolbar", leftbar);
-    settings->setValue( "centertoolbar", centerbar);
-    settings->setValue( "righttoolbar", rightbar);
+    if ( settings->value("MainWindow/qmlcontrolbar", false).toBool() ){
+        settings->beginGroup("MainWindow");
+        settings->beginGroup("Controlbar");
 
-    settings->endGroup();
-    settings->endGroup();
+        leftbar << "Bookmark" << "Subtitle" << "Random" << "Loop";
+        centerbar << "Slower" << "Previous" << "Play" << "Next" << "Faster";
+        rightbar << "Fullscreen" << "Playlist" << "TBD";
+        settings->setValue( "lefttoolbar", leftbar);
+        settings->setValue( "centertoolbar", centerbar);
+        settings->setValue( "righttoolbar", rightbar);
+
+        settings->endGroup();
+        settings->setValue( "qmltoolbar", true);
+        settings->endGroup();
+    }
 
     /* get models for qml-controlbar */
     leftbar = settings->value("MainWindow/Controlbar/lefttoolbar").toStringList();
@@ -867,7 +881,7 @@ void MainInterface::setVideoSize( unsigned int w, unsigned int h )
                 {
                     if( menuBar()->isVisible() )
                         h -= menuBar()->height();
-                    if( controls->isVisible() )
+                    if( controls && controls->isVisible() )
                         h -= controls->height();
                     if( statusBar()->isVisible() )
                         h -= statusBar()->height();
@@ -1152,7 +1166,8 @@ void MainInterface::dockPlaylist( bool p_docked )
 void MainInterface::displayNormalView()
 {
     menuBar()->setVisible( false );
-    controls->setVisible( false );
+    if (controls)
+        controls->setVisible( false );
     statusBar()->setVisible( false );
     inputC->setVisible( false );
 }
@@ -1164,7 +1179,8 @@ void MainInterface::displayNormalView()
 void MainInterface::setMinimalView( bool b_minimal )
 {
     bool b_menuBarVisible = menuBar()->isVisible();
-    bool b_controlsVisible = controls->isVisible();
+    bool b_controlsVisible = false;
+    if (controls) controls->isVisible();
     bool b_statusBarVisible = statusBar()->isVisible();
     bool b_inputCVisible = inputC->isVisible();
 
@@ -1174,7 +1190,7 @@ void MainInterface::setMinimalView( bool b_minimal )
 
         if( b_menuBarVisible )
             i_heightChange += menuBar()->height();
-        if( b_controlsVisible )
+        if( controls && b_controlsVisible )
             i_heightChange += controls->height();
         if( b_statusBarVisible )
             i_heightChange += statusBar()->height();
@@ -1186,7 +1202,8 @@ void MainInterface::setMinimalView( bool b_minimal )
     }
 
     menuBar()->setVisible( !b_minimal );
-    controls->setVisible( !b_minimal );
+    if( controls )
+        controls->setVisible( !b_minimal );
     statusBar()->setVisible( !b_minimal && b_statusbarVisible );
     inputC->setVisible( !b_minimal );
 
@@ -1196,7 +1213,7 @@ void MainInterface::setMinimalView( bool b_minimal )
 
         if( !b_menuBarVisible && menuBar()->isVisible() )
             i_heightChange += menuBar()->height();
-        if( !b_controlsVisible && controls->isVisible() )
+        if( controls && !b_controlsVisible && controls->isVisible() )
             i_heightChange += controls->height();
         if( !b_statusBarVisible && statusBar()->isVisible() )
             i_heightChange += statusBar()->height();
@@ -1238,6 +1255,7 @@ void MainInterface::toggleMinimalView( bool b_minimal )
 /* toggling advanced controls buttons */
 void MainInterface::toggleAdvancedButtons()
 {
+    if( !controls ) return;
     controls->toggleAdvanced();
 //    if( fullscreenControls ) fullscreenControls->toggleAdvanced();
 }

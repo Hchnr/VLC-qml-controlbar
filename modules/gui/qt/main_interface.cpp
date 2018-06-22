@@ -58,6 +58,7 @@
 #include <QWindow>
 #include <QMenu>
 #include <QMenuBar>
+#include <QSignalMapper>
 #include <QStatusBar>
 #include <QLabel>
 #include <QStackedWidget>
@@ -496,10 +497,10 @@ void MainInterface::createMainWidget( QSettings *creationSettings )
     resizeStack( stackWidgetsSizes[bgWidget].width(), stackWidgetsSizes[bgWidget].height() );
 
     /* Create the CONTROLS Widget */
-    /*
+
     controls = new ControlsWidget( p_intf,
          creationSettings->value( "MainWindow/adv-controls", false ).toBool(), this );
-         */
+    controls->setVisible(false);
     /* without inputC, VLC crashes when play a video
        with this inputC get error:
          libva error: va_getDriverName() failed with unknown libva error,driver_name=(null)
@@ -551,6 +552,11 @@ void MainInterface::createMainWidget( QSettings *creationSettings )
     rootCtx->setContextProperty("rightbarList", QVariant::fromValue(rightList));
     controlsBar->setSource( QUrl ( QStringLiteral("qrc:/controlbar/Toolbar/BottomToolbar.qml") ) );
     controlsBar->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+
+    QObject *item = (QObject*) controlsBar->rootObject();
+    CONNECT(item, testStop(), (QObject*) controls->toolbarActionsMapper, map());
+    controls->toolbarActionsMapper->setMapping(item, STOP_ACTION);
 
     /* pass models for qml-Toolbar here */
 

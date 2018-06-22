@@ -740,6 +740,8 @@ ControlsWidget::ControlsWidget( intf_thread_t *_p_i,
 
     controlLayout->addLayout( controlLayout1 );
     controlLayout->addLayout( controlLayout2 );
+
+    /* add connections for qml toolbar here */
 }
 
 void ControlsWidget::toggleAdvanced()

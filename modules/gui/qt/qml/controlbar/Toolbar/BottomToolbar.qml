@@ -9,6 +9,7 @@ Rectangle {
     height: sliderBar.height + toolBar.height
     property alias sliderBar: sliderBar
     property alias toolBar: toolBar
+    signal testStop()
 
     // get the icon path of widgets
     function getIconFromName(name) {

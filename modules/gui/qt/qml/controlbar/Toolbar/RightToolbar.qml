@@ -14,17 +14,13 @@ ToolBar{
                 Image {
                     source: controlbar.getIconFromName(widgetName)
                 }
-                /*
+
                 onClicked: {
-                    if (model.modelData.widgetName === "Fullscreen") {
-                        if (fakePlayer.isFullScreen)
-                            fakePlayer.visibility = Window.Windowed
-                        else
-                            fakePlayer.visibility = Window.FullScreen
-                        fakePlayer.isFullScreen = !fakePlayer.FullScreen
+                    if (widgetName === "TBD") {
+                        emit: controlbar.testStop()
                     }
                 }
-                */
+
             }
         }
     }
